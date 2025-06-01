@@ -2,6 +2,7 @@
 #define PARSER_H_INCLUDED
 
 #include <bits/stdc++.h>
+#include <fstream>
 
 using namespace std;
 
@@ -24,7 +25,7 @@ vector<int>turnAroundTime;
 vector<float>normTurn;
 
 
-void parse_algorithms(string algorithm_chunk)
+void parse_algorithms(ifstream &input_file, string algorithm_chunk)
 {
     stringstream stream(algorithm_chunk);
     while (stream.good())
@@ -36,17 +37,17 @@ void parse_algorithms(string algorithm_chunk)
         char algorithm_id = temp_str[0];
         getline(ss, temp_str, '-');
         int quantum = temp_str.size() >= 1 ? stoi(temp_str) : -1;
-        algorithms.push_back( make_pair(algorithm_id, quantum) );
+        algorithms.push_back(make_pair(algorithm_id, quantum));
     }
 }
 
-void parse_processes()
+void parse_processes(ifstream &input_file)
 {
     string process_chunk, process_name;
     int process_arrival_time, process_service_time;
-    for(int i=0; i<process_count; i++)
+    for (int i = 0; i < process_count; i++)
     {
-        cin >> process_chunk;
+        input_file >> process_chunk;
 
         stringstream stream(process_chunk);
         string temp_str;
@@ -57,23 +58,30 @@ void parse_processes()
         getline(stream, temp_str, ',');
         process_service_time = stoi(temp_str);
 
-        processes.push_back( make_tuple(process_name, process_arrival_time, process_service_time) );
+        processes.push_back(make_tuple(process_name, process_arrival_time, process_service_time));
         processToIndex[process_name] = i;
     }
 }
 
-void parse()
+void parse(const string &filename)
 {
+    ifstream input_file(filename);
+    if (!input_file.is_open())
+    {
+        cerr << "Error: Unable to open file " << filename << endl;
+        exit(EXIT_FAILURE);
+    }
+
     string algorithm_chunk;
-    cin >> operation >> algorithm_chunk >> last_instant >> process_count;
-    parse_algorithms(algorithm_chunk);
-    parse_processes();
+    input_file >> operation >> algorithm_chunk >> last_instant >> process_count;
+    parse_algorithms(input_file, algorithm_chunk);
+    parse_processes(input_file);
     finishTime.resize(process_count);
     turnAroundTime.resize(process_count);
     normTurn.resize(process_count);
     timeline.resize(last_instant);
-    for(int i=0; i<last_instant; i++)
-        for(int j=0; j<process_count; j++)
+    for (int i = 0; i < last_instant; i++)
+        for (int j = 0; j < process_count; j++)
             timeline[i].push_back(' ');
 }
 

@@ -522,13 +522,19 @@ void execute_algorithm(char algorithm_id, int quantum,string operation)
     }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-    parse();
+    if (argc < 2) {
+        cerr << "Usage: " << argv[0] << " <input_file_path>" << endl;
+        return 1;
+    }
+
+    string input_file_path = argv[1];
+    parse(input_file_path);
     for (int idx = 0; idx < (int)algorithms.size(); idx++)
     {
         clear_timeline();
-        execute_algorithm(algorithms[idx].first, algorithms[idx].second,operation);
+        execute_algorithm(algorithms[idx].first, algorithms[idx].second, operation);
         if (operation == TRACE)
             printTimeline(idx);
         else if (operation == SHOW_STATISTICS)

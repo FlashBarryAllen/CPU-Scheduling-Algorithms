@@ -1,4 +1,4 @@
 target:
-	g++ -c main.cpp
+	g++ -c -g main.cpp
 	g++ -o lab4 main.o
 	
